@@ -124,10 +124,10 @@ private:
     // CUTY / PARAMETRY
     // ======================================================
     double fMaxZ = 22.;
-    //double fTotCutAnniMin = 0., fTotCutAnniMax = 350.;
-    //double fTotCutDeexMin = 450., fTotCutDeexMax = 1500.;
-    double fTotCutAnniMin = 0., fTotCutAnniMax = 77000000.;
-    double fTotCutDeexMin = 8500000., fTotCutDeexMax = 150000000;
+    double fTotCutAnniMin = 0., fTotCutAnniMax = 350.;
+    double fTotCutDeexMin = 450., fTotCutDeexMax = 1500.;
+    //double fTotCutAnniMin = 0., fTotCutAnniMax = 77000000.;
+    //double fTotCutDeexMin = 8500000., fTotCutDeexMax = 150000000;
     double fMinRelAngleCut = 190.;
     double fMaxTimeDiff = 3.;
     double fMaxDOP = 8.;
@@ -160,8 +160,7 @@ private:
     void identifyAnnihilationHits(const std::vector<int>& goodHits,std::vector<std::vector<int>>& triplets) const;
     double getTimeDiff(int i,int j,int k) const;       
     double getRelativeAngle(int i,int j,int k) const;
-    double getDOP(int i,int j,int k) const;            
-    bool isPromptHit(int i,int j,int k) const; 
+    double getDOP(int i,int j,int k) const;    
     bool isTrueSignalTriplet(int i1, int i2, int i3) const;
     bool isTrueSignalWithPrompt(int i1, int i2, int i3, const std::vector<int>& prompts) const;
     bool isTrueSignalEvent() const;   

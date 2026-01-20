@@ -352,17 +352,6 @@ double Selector3g::getDOP(int i1, int i2, int i3) const {
     return fabs(n.Dot(ap - p1)) / n.Mag();
 }
 
-bool Selector3g::isPromptHit(int i1,int i2,int i3) const {
-    if (!fisMC) return false;
-    std::vector<int> promptIndices;
-    for (Int_t i=0;i<nhits;i++)
-        if ((*gammaTags)[i]==1) promptIndices.push_back(i);
-    int vtx = (*MCVtxIndices)[i1];
-    for (auto idx : promptIndices)
-        if ((*MCVtxIndices)[idx]==vtx) return true;
-    return false;
-}
-
 bool Selector3g::isTrueSignalTriplet(int i1,int i2,int i3) const {
     bool isAnnihilation = (*gammaTags)[i1]==3 && (*gammaTags)[i2]==3 && (*gammaTags)[i3]==3;
     int v1 = (*MCVtxIndices)[i1], v2 = (*MCVtxIndices)[i2], v3 = (*MCVtxIndices)[i3];

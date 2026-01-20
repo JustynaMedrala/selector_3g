@@ -8,9 +8,8 @@
 
 
 Selector3g::Selector3g(const std::string& inputFile,
-                       const std::string& outputFile,
-                       bool isMC)
-    : fInput(inputFile), fOutput(outputFile), fisMC(isMC), fIsSignalEvent(false), fIsSignalTriplet(false), fIsSignalWithPrompt(false)
+                       const std::string& outputFile)
+    : fInput(inputFile), fOutput(outputFile), fisMC(false), fIsSignalEvent(false), fIsSignalTriplet(false), fIsSignalWithPrompt(false)
 {
     fIn = TFile::Open(fInput.c_str(),"READ");
     if (!fIn || !fIn->IsOpen()) {
@@ -74,7 +73,7 @@ Selector3g::Selector3g(const std::string& inputFile,
 }
 
 Selector3g::Selector3g(const std::string& inputFile)
-    : Selector3g(inputFile,"T",false) {}
+    : Selector3g(inputFile,"T") {}
 
 Selector3g::~Selector3g() {
     if(fIn) fIn->Close();

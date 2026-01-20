@@ -9,46 +9,36 @@
 #include "TTree.h"
 #include "TVector3.h"
 
-// Stałe fizyczne
 namespace Constants {
-    constexpr double kLightVelocity_cm_ns = 29.9792458; // cm/ps
+    constexpr double kLightVelocity_cm_ns = 29.9792458;
 }
 
-// Struktura do przechowywania statystyk dla każdego cutu
 struct CutStats {
     int totalEvents = 0;
     int signalEvents = 0;
 };
 
-// ======================================================
-// KLASA Selector3g
-// ======================================================
 class Selector3g {
 public:
-    // KONSTRUKTORY / DESTRUKTOR
     Selector3g(const std::string& inputFile,
-               const std::string& outputFile,
-               bool isMC=true);
-    Selector3g(const std::string& inputFile); // uproszczony
+               const std::string& outputFile);
+    Selector3g(const std::string& inputFile); 
     ~Selector3g();
 
-    // ANALIZA
     void runAnalysis();
     void processEvent(Long64_t entry);
 
 private:
-    // --- Dane wejściowe / TTree ---
     std::string fInput;
     std::string fOutput;
-    bool fisMC; // czy dane MC
-    bool fIsSignalEvent; // flaga do liczenia efficiency
+    bool fisMC; 
+    bool fIsSignalEvent; 
     bool fIsSignalTriplet;
     bool fIsSignalWithPrompt;
     bool isSignal;
     TFile* fIn = nullptr;
     TTree* fTree = nullptr;
 
-    // --- Dane wyjściowe / TTree ---
     TFile* fOut = nullptr;
     TTree* fOutputTree = nullptr;
     Long64_t fEventID;
@@ -71,14 +61,12 @@ private:
     bool hasGoodTriplet;
     bool hasGoodTriplet_signal;
 
-    // --- Branchy z TTree ---
     Int_t nhits;
     std::vector<double>* times = nullptr;
     std::vector<TVector3>* pos = nullptr;
     std::vector<double>* tots = nullptr;
     std::vector<int>* scins = nullptr;
 
-    // MC
     std::vector<int>* gammaTags = nullptr;
     std::vector<int>* MCVtxIndices = nullptr;
     std::vector<int>* MCIndices = nullptr;
@@ -106,7 +94,6 @@ private:
 
     std::vector<float> fTimeDiff;
 
-    // Prompt info
     float fPromptX = -1000000;
     float fPromptY = -1000000;
     float fPromptZ = -1000000;
@@ -120,42 +107,27 @@ private:
 
     double fTripletDOP = 0.;
 
-    // ======================================================
-    // CUTY / PARAMETRY
-    // ======================================================
     double fMaxZ = 22.;
-    double fTotCutAnniMin = 0., fTotCutAnniMax = 350.;
-    double fTotCutDeexMin = 400., fTotCutDeexMax = 1500.;
-    //double fTotCutAnniMin = 0., fTotCutAnniMax = 77000000.;
-    //double fTotCutDeexMin = 8500000., fTotCutDeexMax = 150000000;
+    //double fTotCutAnniMin = 0., fTotCutAnniMax = 350.;
+    //double fTotCutDeexMin = 400., fTotCutDeexMax = 1500.;
+    double fTotCutAnniMin = 0., fTotCutAnniMax = 77000000.;
+    double fTotCutDeexMin = 8500000., fTotCutDeexMax = 150000000;
     double fMinRelAngleCut = 190.;
     double fMaxTimeDiff = 3.;
     double fMaxDOP = 8.;
     TVector3 fSourcePos{0,0,0};
 
-    // ======================================================
-    // STATYSTYKI
-    // ======================================================
     std::map<std::string,CutStats> fCutStats;
 
-    // ======================================================
-    // PROSTE CHECKI
-    // ======================================================
     bool checkZ(int idx,double maxZ) const;
     bool checkToT(int idx,double min,double max) const;
     double calculateTOF(int idx,const TVector3& source) const;
     double calculateAngle(int i1,int i2);
     TVector3 calculateAnnihilationPoint(int i1,int i2,int i3) const;
 
-    // ======================================================
-    // CUT STATISTICS
-    // ======================================================
     void updateCutStatistics(const std::string& name,bool passed);
     void printCutAnalysis();
 
-    // ======================================================
-    // TRIPLET HELPERS
-    // ======================================================
     void identifyPromptHits(const std::vector<int>& goodHits,std::vector<int>& prompts) const;
     void identifyAnnihilationHits(const std::vector<int>& goodHits,std::vector<std::vector<int>>& triplets) const;
     double getTimeDiff(int i,int j,int k) const;       

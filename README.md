@@ -17,3 +17,7 @@ Selector3g s(
     "output.root", // output file
 );
 ```
+## Output
+
+- The main output file is `output.root`, which contains the selected 3 + 1 gamma events from the input file.
+- A log file `cut_analysis.log` is generated, containing a summary of all cuts applied.

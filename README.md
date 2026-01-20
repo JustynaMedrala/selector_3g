@@ -9,12 +9,11 @@ root -l -b -q run.C
 
 ## Changing the input file path
 
-To use a different input file, edit the path in `run.C` (or wherever the Selector is initialized):
+To use a different input file, edit the path in `run.C`:
 
 ```cpp
 Selector3g s(
     "/data/4/users/jsowa/data/Run10/MC/2025_10_16-23_08_22.ntu.root", // input file
     "output.root", // output file
-    true // optional flag
 );
 ```

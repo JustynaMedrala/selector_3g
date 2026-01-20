@@ -6,9 +6,7 @@
 #include <random>
 #include <map>
 
-// ======================================================
-// KONSTRUKTORY / DESTRUKTOR
-// ======================================================
+
 Selector3g::Selector3g(const std::string& inputFile,
                        const std::string& outputFile,
                        bool isMC)
@@ -45,14 +43,12 @@ Selector3g::Selector3g(const std::string& inputFile,
     fOut = TFile::Open(fOutput.c_str(),"RECREATE");
     fOutputTree = new TTree("HitTree","3γ reconstructed data");
 
-    // output branches
     fOutputTree->Branch("eventID",&fEventID);
     fOutputTree->Branch("multiplicity",&nhits);
     fOutputTree->Branch("nAnnihilationTriplets",&fNAnnihilationTriplets);
     fOutputTree->Branch("nPromptHits",&fNPromptHits);
     fOutputTree->Branch("hasPromptHit",&fHasPromptHit);
 
-    // Hit coordinates
     fOutputTree->Branch("hit1_x", &fHit1X); fOutputTree->Branch("hit1_y", &fHit1Y); fOutputTree->Branch("hit1_z", &fHit1Z);
     fOutputTree->Branch("hit1_time", &fHit1Time); fOutputTree->Branch("hit1_tot", &fHit1ToT); fOutputTree->Branch("hit1_energy", &fHit1Energy);
     
@@ -65,7 +61,6 @@ Selector3g::Selector3g(const std::string& inputFile,
     fOutputTree->Branch("hit1_mcTime", &fHit1MCTime); fOutputTree->Branch("hit2_mcTime", &fHit2MCTime); fOutputTree->Branch("hit3_mcTime", &fHit3MCTime);
     fOutputTree->Branch("hit1_mcZ", &fHit1MCZ); fOutputTree->Branch("hit2_mcZ", &fHit2MCZ); fOutputTree->Branch("hit3_mcZ", &fHit3MCZ);
 
-    // Prompt hit
     fOutputTree->Branch("prompt_x", &fPromptX); fOutputTree->Branch("prompt_y", &fPromptY); fOutputTree->Branch("prompt_z", &fPromptZ);
     fOutputTree->Branch("prompt_time", &fPromptTime); fOutputTree->Branch("prompt_tot", &fPromptToT);
 
@@ -73,13 +68,11 @@ Selector3g::Selector3g(const std::string& inputFile,
 
     fOutputTree->Branch("lifetime", &fLifetime); 
 
-    // Angles and times
     fOutputTree->Branch("angle12", &fAngle12); fOutputTree->Branch("angle23", &fAngle23); fOutputTree->Branch("angle31", &fAngle31);
     fOutputTree->Branch("angleDiff", &fAngleDiff); fOutputTree->Branch("angleSum", &fAngleSum);
     fOutputTree->Branch("timeDiff", &fTimeDiff);
 }
 
-// konstruktor uproszczony
 Selector3g::Selector3g(const std::string& inputFile)
     : Selector3g(inputFile,"T",false) {}
 
@@ -88,23 +81,17 @@ Selector3g::~Selector3g() {
     if(fOut) fOut->Close();
 }
 
-// ======================================================
-// ANALIZA
-// ======================================================
 void Selector3g::runAnalysis() {
     Long64_t entries = fTree->GetEntries();
     for(Long64_t i=0;i<entries;i++)
         processEvent(i);
 
-    printCutAnalysis();
+    //printCutAnalysis();
     fOut->cd();
     fOutputTree->Write();
     fOut->Close();
 }
 
-// ======================================================
-// PROCESS EVENT
-// ======================================================
 void Selector3g::processEvent(Long64_t entry) {
     fTree->GetEntry(entry);
     fEventID = entry;
@@ -113,37 +100,22 @@ void Selector3g::processEvent(Long64_t entry) {
     fNPromptHits = 0;
     fHasPromptHit = false;
 
-    // -------------------------
-    // Multiplicity cut
-    // -------------------------
     if (nhits < 4) return; 
 
-    // -------------------------
-    // Z-cut
-    // -------------------------
     std::vector<int> goodHits;
     for (Int_t i = 0; i < nhits; ++i)
         if (checkZ(i, fMaxZ)) goodHits.push_back(i);
 
     if (goodHits.size() < 4) return;
 
-    // -------------------------
-    // Event-wise sygnał
-    // -------------------------
     bool isSignalEvent = false;
     if (fisMC) isSignalEvent = isTrueSignalEvent();
     updateCutStatistics("02_Multiplicity_ge_4", isSignalEvent);
     updateCutStatistics("03_Z_cut", isSignalEvent);
 
-    // -------------------------
-    // Prompty
-    // -------------------------
     std::vector<int> prompts;
     identifyPromptHits(goodHits, prompts);
 
-    // -------------------------
-    // Annihilation triplets
-    // -------------------------
     std::vector<std::vector<int>> triplets;
     identifyAnnihilationHits(goodHits, triplets);
     if (triplets.empty()) return;
@@ -242,9 +214,6 @@ void Selector3g::processEvent(Long64_t entry) {
     if(hasGoodTriplet) updateCutStatistics("07_Good_Triplet", hasGoodTriplet_signal);
 }
 
-// ======================================================
-// PROSTE CHECKI
-// ======================================================
 bool Selector3g::checkZ(int idx,double maxZ) const {
     return ((*pos)[idx].Z() >= -maxZ && (*pos)[idx].Z() <= maxZ);
 }
@@ -267,9 +236,6 @@ TVector3 Selector3g::calculateAnnihilationPoint(int i1,int i2,int i3) const {
     return ((*pos)[i1]+(*pos)[i2]+(*pos)[i3])*(1./3.);
 }
 
-// ======================================================
-// PROMPT I ANNIHILATION IDENTIFICATION
-// ======================================================
 void Selector3g::identifyPromptHits(const std::vector<int>& goodHits,std::vector<int>& prompts) const {
     for (auto i : goodHits) {
         if (checkToT(i, fTotCutDeexMin, fTotCutDeexMax))
@@ -290,9 +256,6 @@ void Selector3g::identifyAnnihilationHits(const std::vector<int>& goodHits,std::
             }
 }
 
-// ======================================================
-// CUT STATS
-// ======================================================
 void Selector3g::updateCutStatistics(const std::string& name,bool passed){
     fCutStats[name].totalEvents++;
     if(passed) fCutStats[name].signalEvents++;
@@ -311,9 +274,6 @@ void Selector3g::printCutAnalysis(){
                  <<c.second.signalEvents/(double)c.second.totalEvents<<"\n";
 }
 
-// ======================================================
-// TRIPLET HELPERS
-// ======================================================
 double Selector3g::getTimeDiff(int i1, int i2, int i3) const {
     double t1 = (*times)[i1] - calculateTOF(i1, fSourcePos);
     double t2 = (*times)[i2] - calculateTOF(i2, fSourcePos);

@@ -1,0 +1,8 @@
+
+CUT SUMMARY:
+          02_Multiplicity_ge_4  passed=18494  signal=13  efficiency=1.000000  purity=0.000703
+                      03_Z_cut  passed=18494  signal=13  efficiency=1.000000  purity=0.000703
+                   04_Geometry  passed=5306  signal=0  efficiency=0.000000  purity=0.000000
+                       05_Time  passed=5888  signal=0  efficiency=0.000000  purity=0.000000
+                        06_DOP  passed=18494  signal=0  efficiency=0.000000  purity=0.000000
+               07_Good_Triplet  passed=230  signal=0  efficiency=0.000000  purity=0.000000

@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <random>
 #include <map>
+#include <fstream>
+#include <iomanip>
 
 
 Selector3g::Selector3g(const std::string& inputFile,
@@ -85,7 +87,7 @@ void Selector3g::runAnalysis() {
     for(Long64_t i=0;i<entries;i++)
         processEvent(i);
 
-    //printCutAnalysis();
+    printCutAnalysis();
     fOut->cd();
     fOutputTree->Write();
     fOut->Close();
@@ -260,17 +262,28 @@ void Selector3g::updateCutStatistics(const std::string& name,bool passed){
     if(passed) fCutStats[name].signalEvents++;
 }
 
-void Selector3g::printCutAnalysis(){
-    std::cout<<"\nCUT SUMMARY:\n";
+void Selector3g::printCutAnalysis() {
+    std::ofstream logfile("cut_analysis.log");
+    if (!logfile.is_open()) {
+        std::cerr << "Error: cannot open cut_analysis.log for writing!\n";
+        return;
+    }
+
+    logfile << "\nCUT SUMMARY:\n";
     int signal_total = fCutStats.begin()->second.signalEvents;
-    for(auto& c : fCutStats)
-        std::cout<<std::setw(30)<<c.first
-                 <<"  passed="<<c.second.totalEvents
-                 <<"  signal="<<c.second.signalEvents
-                 <<"  efficiency="<<std::fixed
-                 <<c.second.signalEvents/(double)signal_total
-                 <<"  purity="<<std::fixed
-                 <<c.second.signalEvents/(double)c.second.totalEvents<<"\n";
+
+    for (auto& c : fCutStats) {
+        logfile << std::setw(30) << c.first
+                << "  passed=" << c.second.totalEvents
+                << "  signal=" << c.second.signalEvents
+                << "  efficiency=" << std::fixed
+                << c.second.signalEvents / (double)signal_total
+                << "  purity=" << std::fixed
+                << c.second.signalEvents / (double)c.second.totalEvents
+                << "\n";
+    }
+
+    logfile.close(); // zamykamy plik po zapisaniu
 }
 
 double Selector3g::getTimeDiff(int i1, int i2, int i3) const {

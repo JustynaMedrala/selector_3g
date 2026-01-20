@@ -14,7 +14,7 @@ To use a different input file, edit the path in `run.C`:
 ```cpp
 Selector3g s(
     "/data/4/users/jsowa/data/Run10/MC/2025_10_16-23_08_22.ntu.root", // input file
-    "output.root", // output file
+    "output.root" // output file
 );
 ```
 ## Output

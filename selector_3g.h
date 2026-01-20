@@ -125,7 +125,7 @@ private:
     // ======================================================
     double fMaxZ = 22.;
     double fTotCutAnniMin = 0., fTotCutAnniMax = 350.;
-    double fTotCutDeexMin = 450., fTotCutDeexMax = 1500.;
+    double fTotCutDeexMin = 400., fTotCutDeexMax = 1500.;
     //double fTotCutAnniMin = 0., fTotCutAnniMax = 77000000.;
     //double fTotCutDeexMin = 8500000., fTotCutDeexMax = 150000000;
     double fMinRelAngleCut = 190.;
